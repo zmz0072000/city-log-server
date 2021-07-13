@@ -11,7 +11,6 @@
 
 const { User } = require('../config/database');
 const bcrypt = require('bcrypt');
-const Permission = require('../utils/Permission');
 
 exports.getUserInfo = async (req, res) => {
     if (req.user) {
@@ -43,7 +42,7 @@ exports.updateUserInfo = async (req, res) => {
             userId: req.user.userId
         }
     }).then(()=>{
-        res.send({code:20000,message: 'Changed successfully!'})
+        res.send({code:200,message: 'Changed successfully!'})
     }).catch((e) => {
         console.log(e);
         res.send({ code: 0, message: 'UserInfo get error: check passed value!' })
