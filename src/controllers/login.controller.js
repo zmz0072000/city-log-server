@@ -22,5 +22,8 @@ exports.login = async (req, res) => {
         } else {
             res.send({ code: 0, message: 'Username/Password doesn\'t match the record!' })
         }
+    }).catch((e) => {
+        console.log('login findOne failed:'+e);
+        res.send({ code: 0, message: 'login findOne failed: check passed value!' })
     })
 }

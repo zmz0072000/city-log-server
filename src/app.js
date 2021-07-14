@@ -1,6 +1,6 @@
 const express = require('express')
 const session = require('express-session');
-const cors = require('cors')
+//const cors = require('cors')
 
 const app = express()
 
@@ -14,7 +14,8 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(cors())
+//fixme: I have no idea why cors should be here. Maybe it shouldn't?
+//app.use(cors())
 
 // Routes
 const loginRoute = require('./routes/login.routes')

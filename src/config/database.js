@@ -3,6 +3,8 @@ const {Sequelize, DataTypes} = require('sequelize');
 require('dotenv').config();
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 
+//fixme: 使用之前yan的东西，配合sequelize脚手架搭建表格关系。
+
 const User = sequelize.define(
     'user',
     {
