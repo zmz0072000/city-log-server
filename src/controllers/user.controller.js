@@ -34,7 +34,9 @@ exports.getUserInfo = async (req, res) => {
 
 exports.updateUserInfo = async (req, res) => {
     const user = {
-        ...req.body
+        email: req.body.email,
+        name: req.body.name,
+        cityId: req.body.city
     }
 
     User.update(user,{
