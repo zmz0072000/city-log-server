@@ -10,7 +10,7 @@ module.exports = {
         return jsonwebtoken.sign({
             email
         }, secret, {
-            expiresIn: "120s"
+            expiresIn: "5m"
         })
     },
 

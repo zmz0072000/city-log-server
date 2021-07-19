@@ -11,6 +11,7 @@
 
 const { User } = require('../config/database');
 const bcrypt = require('bcrypt');
+const Permission = require("../utils/Permission");
 
 exports.getUserInfo = async (req, res) => {
     if (req.user) {
@@ -33,7 +34,24 @@ exports.getUserInfo = async (req, res) => {
 
 exports.updateUserInfo = async (req, res) => {
     const user = {
-        ...req.body,
+        ...req.body
+    }
+
+    User.update(user,{
+        where:{
+            userId: req.user.userId
+        }
+    }).then(()=>{
+        res.send({code:200,message: 'Changed successfully!',
+            token: Permission.createToken(req.body.email)})
+    }).catch((e) => {
+        console.log(e);
+        res.send({ code: 0, message: 'UserInfo get error: check passed value!' })
+    })
+}
+
+exports.updateUserPwd = async (req, res) => {
+    const user = {
         pwd: bcrypt.hashSync(req.body.pwd, bcrypt.genSaltSync())
     }
 
@@ -45,6 +63,7 @@ exports.updateUserInfo = async (req, res) => {
         res.send({code:200,message: 'Changed successfully!'})
     }).catch((e) => {
         console.log(e);
-        res.send({ code: 0, message: 'UserInfo get error: check passed value!' })
+        res.send({ code: 0, message: 'UserInfo get error: check passed value!'})
     })
+
 }

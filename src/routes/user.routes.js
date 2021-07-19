@@ -8,4 +8,6 @@ router.get("/", Permission.auth(), userController.getUserInfo)
 
 router.put("/", Permission.auth(), userController.updateUserInfo)
 
+router.put("/pwd/", Permission.auth(), userController.updateUserPwd)
+
 module.exports = router
