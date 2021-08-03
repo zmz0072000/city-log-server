@@ -13,7 +13,7 @@ const getUserInfo = async (token) => {
         if (user === null) {
             return msg.failMsg('authorization failed: '+error)
         }
-        const {email, name, CityId, GroupId} = User
+        const {email, name, CityId, GroupId} = user
         return msg.successMsg({email, name, CityId, GroupId},
             'get user info success')
     } catch (e) {
