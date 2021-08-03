@@ -1,40 +1,13 @@
-/*
-* localhost:3000/api/register
-* POST:
-* Body:
-* email
-* pwd (无需后端进行两次同样校验)
-* name
-* city (int)
-* Return
-* 200: {msg: “success”}
-* */
-const { User } = require('../config/database');
-const bcrypt = require('bcrypt');
+const UserService = require('../service/user.service')
+const msg = require('../utils/Message')
+require('colors')
 
 exports.register = async (req, res) => {
-    // const { email, pwd, name, city } = req.body
-    // console.log(email)
-    //
-    // res.status(201).send({
-    //     message: "fake success",
-    //     body: {
-    //         user : {email, pwd, name, city}
-    //     }
-    // })
-
-
-    const { email, pwd, name, city } = req.body;
-    User.create({
-        email: email,
-        pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync()),
-        name: name,
-        cityId: city,
-        groupId: 2
-    }).then(() => {
-        res.send({ code: 200, message: 'Register success!' })
+    const { email, pwd, name, city } = req.body
+    console.log('register: '.green+JSON.stringify({ email, pwd, name, city }))
+    UserService.register(email, pwd, name, city).then(result => {
+        msg.sendMsg(res, result)
     }).catch((e) => {
-        console.log(e)
-        res.send({ code: 0, message: 'Register error: check passed value!' })
+        msg.sendMsg(res, msg.failMsg('REGISTER SERVICE UNKNOWN ERROR'), e)
     })
 }

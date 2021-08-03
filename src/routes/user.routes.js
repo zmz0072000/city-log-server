@@ -4,10 +4,10 @@ const router = require("express").Router()
 
 const userController = require("../controllers/user.controller")
 
-router.get("/", Permission.auth(), userController.getUserInfo)
+router.get("/", userController.getUserInfo)
 
-router.put("/", Permission.auth(), userController.updateUserInfo)
+router.put("/", userController.updateUserInfo)
 
-router.put("/pwd/", Permission.auth(), userController.updateUserPwd)
+router.put("/pwd/", userController.updateUserPwd)
 
 module.exports = router

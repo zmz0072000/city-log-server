@@ -1,71 +1,36 @@
-// /user (User profile)
-// GET:
-//     Params:
-//             ?token=
-//             Return
-//         profile
-// email
-// name
-// city (int)
-// group (int)
-
-const { User } = require('../config/database');
-const bcrypt = require('bcrypt');
-const Permission = require("../utils/Permission");
+const SettingService = require('../service/setting.service')
+const msg = require('../utils/Message')
+require('colors')
 
 exports.getUserInfo = async (req, res) => {
-    if (req.user) {
-        const {email,name,cityId,groupId} = req.user;
-        res.send({ code: 200, message: 'Get info success', data: {
-                email,name,cityId,groupId
-            }})
-    }
+    const token = req.query.token
+
+
+    SettingService.getUserInfo(token).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('GET USER INFO SERVICE UNKNOWN ERROR'), e)
+    })
 }
 
-// PUT:
-//     Params:
-//             ?token=
-//             Body:
-//         email
-//
-// pwd (无需后端进行两次同样校验)
-// name
-// city (int)
-
 exports.updateUserInfo = async (req, res) => {
-    const user = {
-        email: req.body.email,
-        name: req.body.name,
-        cityId: req.body.city
-    }
+    const {email, name, city} = req.body
+    const token = req.query.token
 
-    User.update(user,{
-        where:{
-            userId: req.user.userId
-        }
-    }).then(()=>{
-        res.send({code:200,message: 'Changed successfully!',
-            token: Permission.createToken(req.body.email)})
+    SettingService.updateUserInfo(token, email, name, city).then(result => {
+        msg.sendMsg(res, result)
     }).catch((e) => {
-        console.log(e);
-        res.send({ code: 0, message: 'UserInfo get error: check passed value!' })
+        msg.sendMsg(res, msg.failMsg('MODIFY USER INFO SERVICE UNKNOWN ERROR'), e)
     })
 }
 
 exports.updateUserPwd = async (req, res) => {
-    const user = {
-        pwd: bcrypt.hashSync(req.body.pwd, bcrypt.genSaltSync())
-    }
+    const pwd = req.body.pwd
+    const token = req.query.token
 
-    User.update(user,{
-        where:{
-            userId: req.user.userId
-        }
-    }).then(()=>{
-        res.send({code:200,message: 'Changed successfully!'})
+    SettingService.updateUserPwd(token, pwd).then(result => {
+        msg.sendMsg(res, result)
     }).catch((e) => {
-        console.log(e);
-        res.send({ code: 0, message: 'UserInfo get error: check passed value!'})
+        msg.sendMsg(res, msg.failMsg('MODIFY USER PASSWORD SERVICE UNKNOWN ERROR'), e)
     })
-
 }
