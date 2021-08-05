@@ -7,6 +7,10 @@ const City = sequelize.define('City', {
     name: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    detail: {
+        type: DataTypes.STRING(1000),
+        allowNull: false
     }
 }, {
 })
@@ -121,13 +125,31 @@ const forceSync = async() => {
         await sequelize.sync({force: true});
         console.log("Force sync finished.")
         await City.create({
-            name: 'San Francisco'
+            name: 'San Francisco',
+            detail: 'San Francisco, officially the City and County ' +
+                'of San Francisco, is a cultural, commercial, and ' +
+                'financial center in Northern California. San ' +
+                'Francisco is the 16th most populous city in the ' +
+                'United States, and the fourth most populous in ' +
+                'California, with 881,549 residents as of 2019.' +
+                '\n\t - San Francisco in Wikipedia'
         })
         await City.create({
-            name: 'Los Angeles'
+            name: 'Los Angeles',
+            detail: 'Los Angeles , officially the City of Los Angeles and often ' +
+                'abbreviated as L.A., is the largest city in California. It has ' +
+                'an estimated population of nearly 4 million, and is the ' +
+                'second-largest city in the United States, after New York ' +
+                'City, and the third-largest city in North America, after ' +
+                'Mexico City and New York City.' +
+                '\n\t - Los Angeles City in Wikipedia'
         })
         await City.create({
-            name: 'San Jose'
+            name: 'San Jose',
+            detail: 'San Jose, officially San José is the cultural, financial, ' +
+                'and political center of Silicon Valley, and the largest city ' +
+                'in Northern California by both population and area.' +
+                '\n\t - San Jose City in Wikipedia'
         })
         await Group.create({
             name: 'Admin'
