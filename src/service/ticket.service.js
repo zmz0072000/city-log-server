@@ -3,7 +3,7 @@ const Permission = require('../utils/Permission')
 const msg = require('../utils/Message')
 require('colors')
 
-const createTicket = async (token, title, city, lat, long, content) => {
+const createTicket = async (token, title, city, lat, long, content, type, priority, status) => {
     try {
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
@@ -26,10 +26,7 @@ const createTicket = async (token, title, city, lat, long, content) => {
             return msg.failMsg('create ticket error: city not exist')
         }
         const newTicket = await Db.Ticket.create({
-            title: title,
-            content: content,
-            lat: lat,
-            long: long,
+            title, lat, long, content, type, priority, status,
             ticketAuthorId: authorId,
             CityId: city,
         }).then(ticket => {
@@ -52,7 +49,7 @@ const getTicket = async (id) => {
             where: {
                 id: id
             },
-            attributes: ['title', 'content', 'rate', 'lat', 'long', 'followedCount', 'createdAt', 'updatedAt'],
+            attributes: ['title', 'content', 'rate', 'lat', 'long', 'type', 'priority', 'status', 'followedCount', 'createdAt', 'updatedAt'],
             include: [
                 {model: Db.User, as: 'ticketAuthor', attributes: ['id']},
                 {model: Db.Reply,  attributes: ['id', 'content', 'createdAt', 'updatedAt'], include: [
@@ -117,7 +114,7 @@ const modifyAuth = async (token, ticketId) => {
     }
 }
 
-const modifyTicket = async (token, ticketId, title, city, lat, long, content) => {
+const modifyTicket = async (token, ticketId, title, city, lat, long, content, type, priority, status) => {
     try {
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
@@ -126,11 +123,8 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content) =>
         const ticket = authResult.ticket
 
         const newTicketInfo = {
-            title: title,
-            city: city,
-            lat: lat,
-            long: long,
-            content: content
+            title, lat, long, content, type, priority, status,
+            CityId: city,
         }
         await ticket.update(newTicketInfo)
         return msg.successMsg(null, 'modify ticket success')

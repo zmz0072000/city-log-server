@@ -58,6 +58,18 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         defaultValue: 0
     },
+    type: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    priority: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
     lat: {
         type: DataTypes.FLOAT,
         allowNull: false,

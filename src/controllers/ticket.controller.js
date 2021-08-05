@@ -4,8 +4,8 @@ require('colors')
 
 exports.createTicket = async (req, res) => {
     const token = req.query.token
-    const {title, city, lat, long, content} = req.body
-    TicketService.createTicket(token, title, city, lat, long, content).then(result => {
+    const {title, city, lat, long, content, type, priority, status} = req.body
+    TicketService.createTicket(token, title, city, lat, long, content, type, priority, status).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
         msg.sendMsg(res, msg.failMsg('CREATE TICKET SERVICE UNKNOWN ERROR'), e)
@@ -25,9 +25,9 @@ exports.modifyTicket = async (req, res) => {
     const ticketId = req.query.id
     const token = req.query.token
 
-    const {title, city, lat, long, content} = req.body
+    const {title, city, lat, long, content, type, priority, status} = req.body
 
-    TicketService.modifyTicket(token, ticketId, title, city, lat, long, content).then(result => {
+    TicketService.modifyTicket(token, ticketId, title, city, lat, long, content, type, priority, status).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
         msg.sendMsg(res, msg.failMsg('MODIFY TICKET SERVICE UNKNOWN ERROR'), e)
