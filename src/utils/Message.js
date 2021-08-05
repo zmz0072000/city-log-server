@@ -3,11 +3,6 @@ function Message(code, data, message) {
     this.data = data
     this.message = message
 }
-Message.prototype.toString = function messageToString() {
-    return `Message{\n`+
-        `Code: ${this.code}\nData: ${JSON.stringify(this.data)}\n`+
-        `Message: ${this.message}}`
-}
 
 module.exports = {
     // Send a success message and proceed data

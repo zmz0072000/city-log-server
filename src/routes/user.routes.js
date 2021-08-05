@@ -10,4 +10,6 @@ router.put("/", userController.updateUserInfo)
 
 router.put("/pwd/", userController.updateUserPwd)
 
+router.post('/logout/', userController.logout)
+
 module.exports = router

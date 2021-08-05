@@ -9,6 +9,7 @@ const getCity = async (cityId) => {
     try {
         // city exist check
         const city = await Db.City.findOne({
+            attributes: ['name', 'detail'],
             where: {
                 id: cityId
             }

@@ -13,6 +13,7 @@ const createToken = (email) => {
 }
 
 const getPermission = async (token) => {
+    if (typeof token === 'undefined') throw 'empty token, please login again'
     let decoded = ''
     try {
         decoded = jsonwebtoken.verify(token, secret);

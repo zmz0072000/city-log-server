@@ -3,7 +3,7 @@ const msg = require('../utils/Message')
 require('colors')
 
 exports.createTicket = async (req, res) => {
-    const token = req.query.token
+    const token = req.cookies.token
     const {title, city, lat, long, content, type, priority, status} = req.body
     TicketService.createTicket(token, title, city, lat, long, content, type, priority, status).then(result => {
         msg.sendMsg(res, result)
@@ -23,7 +23,7 @@ exports.getTicket = async (req, res) => {
 
 exports.modifyTicket = async (req, res) => {
     const ticketId = req.query.id
-    const token = req.query.token
+    const token = req.cookies.token
 
     const {title, city, lat, long, content, type, priority, status} = req.body
 
@@ -36,7 +36,7 @@ exports.modifyTicket = async (req, res) => {
 
 exports.deleteTicket = async (req, res) => {
     const ticketId = req.query.id
-    const token = req.query.token
+    const token = req.cookies.token
     TicketService.deleteTicket(token, ticketId).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {

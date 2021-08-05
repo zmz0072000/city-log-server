@@ -31,6 +31,14 @@ const updateUserInfo = async (token, email, name, CityId) => {
         if (user === null) {
             return msg.failMsg('authorization failed: '+error)
         }
+        const userCount = await Db.User.count({
+            where: {
+                email: email
+            }
+        })
+        if (userCount !== 0) {
+            return msg.failMsg('Register error: user already exists')
+        }
         const newUserInfo = {
             email: email,
             name: name,

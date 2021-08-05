@@ -132,7 +132,7 @@ const forceSync = async() => {
                 'Francisco is the 16th most populous city in the ' +
                 'United States, and the fourth most populous in ' +
                 'California, with 881,549 residents as of 2019.' +
-                '\n\t - San Francisco in Wikipedia'
+                '<br> - San Francisco in Wikipedia'
         })
         await City.create({
             name: 'Los Angeles',
@@ -142,14 +142,14 @@ const forceSync = async() => {
                 'second-largest city in the United States, after New York ' +
                 'City, and the third-largest city in North America, after ' +
                 'Mexico City and New York City.' +
-                '\n\t - Los Angeles City in Wikipedia'
+                '<br> - Los Angeles City in Wikipedia'
         })
         await City.create({
             name: 'San Jose',
             detail: 'San Jose, officially San José is the cultural, financial, ' +
                 'and political center of Silicon Valley, and the largest city ' +
                 'in Northern California by both population and area.' +
-                '\n\t - San Jose City in Wikipedia'
+                '<br> - San Jose City in Wikipedia'
         })
         await Group.create({
             name: 'Admin'

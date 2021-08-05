@@ -7,7 +7,7 @@ router.put('/', replyController.modifyReply)
 router.delete('/', replyController.deleteReply)*/
 
 exports.createReply = async (req, res) => {
-    const token = req.query.token
+    const token = req.cookies.token
     const ticketId = req.query.ticket
     const content = req.body.content
 
@@ -19,7 +19,7 @@ exports.createReply = async (req, res) => {
 }
 
 exports.modifyReply = async (req, res) => {
-    const token = req.query.token
+    const token = req.cookies.token
     const replyId = req.query.reply
     const content = req.body.content
     ReplyService.modifyReply(token, replyId, content).then(result => {
@@ -30,7 +30,7 @@ exports.modifyReply = async (req, res) => {
 }
 
 exports.deleteReply = async (req, res) => {
-    const token = req.query.token
+    const token = req.cookies.token
     const replyId = req.query.reply
     ReplyService.deleteReply(token, replyId).then(result => {
         msg.sendMsg(res, result)

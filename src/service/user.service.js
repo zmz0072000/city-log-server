@@ -11,7 +11,6 @@ const register = async (email, pwd, name, city) => {
                 email: email
             }
         })
-        console.log("register: Email user count:" + userCount)
         if (userCount !== 0) {
             return msg.failMsg('Register error: user already exists')
         }
