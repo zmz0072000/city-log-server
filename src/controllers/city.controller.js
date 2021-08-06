@@ -2,14 +2,22 @@ const CityService = require('../service/city.service')
 const msg = require('../utils/Message')
 require('colors')
 
-exports.getCity = async (req, res) => {
+exports.getCityInfo = async (req, res) => {
     const id = req.query.id
 
-    CityService.getCity(id).then(result => {
+    CityService.getCityInfo(id).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('CITY SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.failMsg('CITY INFO SERVICE UNKNOWN ERROR'), e)
     })
+}
 
-
+exports.getCityTickets = async (req, res) => {
+    const cityId = req.query.id
+    const {status, priority, isDesc, pageNum} = req.body
+    CityService.getCityTickets(cityId, status, priority, isDesc, pageNum).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('CITY TICKET SERVICE UNKNOWN ERROR'), e)
+    })
 }
