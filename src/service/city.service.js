@@ -56,8 +56,10 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
             order = [['createdAt']]
         }
         console.log('order: '.red+order)
-        const offset = (pageNum - 1) * 10
-
+        let offset = (pageNum - 1) * 10
+        if (offset <= 0) {
+            offset = 0
+        }
         const cityTickets = await Db.Ticket.findAll({
             where: where,
             attributes: ['id', 'title', 'rate', 'type', 'priority', 'status', 'createdAt'],
