@@ -57,11 +57,6 @@ const Ticket = sequelize.define('Ticket', {
         type: DataTypes.STRING(40000),
         allowNull: false
     },
-    rate: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
     type: {
         type: DataTypes.INTEGER,
         allowNull: false,
