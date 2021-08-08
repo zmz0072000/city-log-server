@@ -62,7 +62,7 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
         }
         const cityTickets = await Db.Ticket.findAll({
             where: where,
-            attributes: ['id', 'title', 'type', 'priority', 'status', 'createdAt'],
+            attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
             include: [
                 {model: Db.User, as: 'ticketAuthor', attributes: ['id', 'name']}
             ],

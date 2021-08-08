@@ -79,7 +79,7 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
         defaultValue: 0.0
     },
-    followedCount: {
+    rateSum: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
@@ -101,9 +101,15 @@ User.hasMany(Reply, {as: 'replyAuthor', foreignKey: 'replyAuthorId'})
 Reply.belongsTo(Ticket)
 Ticket.hasMany(Reply)
 
-const Follow = sequelize.define('Follow', {})
-Ticket.belongsToMany(User, {as: 'follower', through: Follow})
-User.belongsToMany(Ticket, {as: 'follower', through: Follow})
+const Rate = sequelize.define('Rate', {
+    score: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    }
+})
+Ticket.belongsToMany(User, {as: 'rate', through: Rate})
+User.belongsToMany(Ticket, {as: 'rate', through: Rate})
 
 const testConnection = async() => {
     try {
@@ -166,7 +172,7 @@ module.exports = {
     User,
     Ticket,
     Reply,
-    Follow,
+    Rate,
     forceSync,
     testConnection
 }

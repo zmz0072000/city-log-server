@@ -34,6 +34,17 @@ exports.modifyTicket = async (req, res) => {
     })
 }
 
+exports.voteTicket = async (req, res) => {
+    const ticketId = req.query.id
+    const token = req.cookies.token
+    const score = req.body.score
+    TicketService.voteTicket(token, ticketId, score).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('VOTE TICKET SERVICE UNKNOWN ERROR'), e)
+    })
+}
+
 exports.deleteTicket = async (req, res) => {
     const ticketId = req.query.id
     const token = req.cookies.token

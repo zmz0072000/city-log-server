@@ -49,7 +49,7 @@ const getTicket = async (id) => {
             where: {
                 id: id
             },
-            attributes: ['title', 'content', 'lat', 'long', 'type', 'priority', 'status', 'followedCount', 'createdAt', 'updatedAt'],
+            attributes: ['title', 'content', 'lat', 'long', 'rateSum', 'type', 'priority', 'status', 'createdAt', 'updatedAt'],
             include: [
                 {model: Db.User, as: 'ticketAuthor', attributes: ['id', 'name']},
                 {model: Db.Reply,  attributes: ['id', 'content', 'createdAt', 'updatedAt'], include: [
@@ -70,7 +70,7 @@ const getTicket = async (id) => {
     }
 }
 
-const modifyAuth = async (token, ticketId) => {
+const modifyAuth = async (token, ticketId, isRating = false) => {
     try {
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user}
@@ -100,10 +100,18 @@ const modifyAuth = async (token, ticketId) => {
         const ticketAuthor = ticket.get('ticketAuthor').get('email')
         const tokenUserName = user.get('email')
 
-        if (tokenUserName === ticketAuthor || tokenUserGroup === 'admin') {
-            return {
-                ticket
+        if (isRating) {
+            if (tokenUserName !== ticketAuthor) {
+                return {ticket, user}
             }
+            else {
+                return {
+                    error: 'you can\'t vote for ticket you wrote'
+                }
+            }
+        }
+        if (tokenUserName === ticketAuthor || tokenUserGroup === 'admin') {
+            return {ticket, user}
         } else {
             return {
                 error: 'you don\'t have permission to do it'
@@ -111,6 +119,49 @@ const modifyAuth = async (token, ticketId) => {
         }
     } catch (e) {
         throw 'modifyAuth: '+e.toString()
+    }
+}
+
+const voteTicket = async (token, ticketId, score) => {
+    try {
+        if (score > 1 || score < -1) {
+            return msg.failMsg('rate ticket failed: invalid score')
+        }
+
+        const authResult = await modifyAuth(token, ticketId, true)
+        if (!authResult.ticket) {
+            return msg.failMsg('rate ticket failed: '+authResult.error)
+        }
+        const currentRate = await Db.Rate.findOne ({
+            where: {
+                TicketId: ticketId,
+                UserId: authResult.user.get('id')
+            }
+        })
+        if (currentRate) {
+            await currentRate.update({
+                score: score
+            })
+        } else {
+            await Db.Rate.create({
+                score: score,
+                TicketId: ticketId,
+                UserId: authResult.user.get('id')
+            })
+        }
+        const rateSum = await Db.Rate.sum('score', {
+            where: {
+                TicketId: ticketId
+            }
+        })
+        await authResult.ticket.update({
+            rateSum: rateSum
+        })
+        console.log('SCORE IS: '.red+score)
+
+        return msg.successMsg({newRateSum: rateSum},'rate ticket success')
+    } catch (e) {
+        return msg.failMsg('rate ticket failed: internal error', e.toString())
     }
 }
 
@@ -148,4 +199,4 @@ const deleteTicket = async (token, ticketId) => {
     }
 }
 
-module.exports = {createTicket, getTicket, modifyTicket, deleteTicket}
+module.exports = {createTicket, getTicket, modifyTicket, voteTicket, deleteTicket}
