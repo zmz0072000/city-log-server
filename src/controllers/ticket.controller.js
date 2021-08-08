@@ -21,6 +21,16 @@ exports.getTicket = async (req, res) => {
     })
 }
 
+exports.getMyRate = async (req, res) => {
+    const ticketId = req.query.id
+    const token = req.cookies.token
+    TicketService.getMyVote(token, ticketId).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('GET MY VOTE SERVICE UNKNOWN ERROR'), e)
+    })
+}
+
 exports.modifyTicket = async (req, res) => {
     const ticketId = req.query.id
     const token = req.cookies.token

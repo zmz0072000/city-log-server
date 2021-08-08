@@ -6,6 +6,7 @@ router.post('/', ticketController.createTicket)
 router.get('/', ticketController.getTicket)
 router.put('/', ticketController.modifyTicket)
 router.put('/vote/', ticketController.voteTicket)
+router.get('/vote/', ticketController.getMyRate)
 router.delete('/', ticketController.deleteTicket)
 
 module.exports = router

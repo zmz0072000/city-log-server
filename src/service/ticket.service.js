@@ -165,6 +165,33 @@ const voteTicket = async (token, ticketId, score) => {
     }
 }
 
+const getMyVote = async (token, ticketId) => {
+    try {
+        let currentRate = 0
+        const user = await Permission.getPermission(token).then(user => {
+            return user
+        }).catch(() => {
+            // if error occurs, user will be null and currentRate stays zero
+            return null
+        })
+
+        if (user) {
+            //update rate
+            const rate = await Db.Rate.findOne({
+                where: {
+                    TicketId: ticketId,
+                    UserId: user.get('id')
+                }
+            })
+            currentRate = rate.get('score')
+        }
+        return msg.successMsg({currentRate}, 'get current rate of user success')
+
+    } catch (e) {
+        return msg.failMsg('get current rate failed: internal error', e.toString())
+    }
+}
+
 const modifyTicket = async (token, ticketId, title, city, lat, long, content, type, priority, status) => {
     try {
         const authResult = await modifyAuth(token, ticketId)
@@ -199,4 +226,4 @@ const deleteTicket = async (token, ticketId) => {
     }
 }
 
-module.exports = {createTicket, getTicket, modifyTicket, voteTicket, deleteTicket}
+module.exports = {createTicket, getTicket, getMyVote, modifyTicket, voteTicket, deleteTicket}
