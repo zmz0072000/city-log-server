@@ -88,16 +88,23 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
 
 }
 
-// const getLandingInfo = async () => {
-//     try {
-//         const newTickets = await Db.Ticket.findAll({
-//             attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
-//             order: [['createdAt', 'DESC']],
-//
-//         })
-//     } catch (e) {
-//         return msg.failMsg('get landing page data failed: internal error', e.toString())
-//     }
-// }
+const getLandingInfo = async () => {
+    try {
+        const newTickets = await Db.Ticket.findAll({
+            attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
+            order: [['createdAt', 'DESC']],
+            limit: 5
+        })
+        const highestRateTickets = await Db.Ticket.findAll({
+            attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
+            order: [['rateSum', 'DESC'], ['createdAt', 'DESC']],
+            limit: 5
+        })
+        const data = {newTickets, highestRateTickets}
+        return msg.successMsg(data, 'get landing page info success')
+    } catch (e) {
+        return msg.failMsg('get landing page data failed: internal error', e.toString())
+    }
+}
 
-module.exports = {getCityInfo, getCityTickets}
+module.exports = {getCityInfo, getCityTickets, getLandingInfo}

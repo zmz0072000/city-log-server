@@ -20,3 +20,11 @@ exports.getCityTickets = async (req, res) => {
         msg.sendMsg(res, msg.failMsg('CITY TICKET SERVICE UNKNOWN ERROR'), e)
     })
 }
+
+exports.getLandingInfo = async (req, res) => {
+    CityService.getLandingInfo().then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('LANDING INFO SERVICE UNKNOWN ERROR'), e)
+    })
+}
