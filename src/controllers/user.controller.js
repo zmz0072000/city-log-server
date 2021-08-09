@@ -37,6 +37,28 @@ exports.updateUserPwd = async (req, res) => {
     })
 }
 
+exports.getUserTickets = async (req, res) => {
+    const token = req.cookies.token
+    const pageNum = req.body.pageNum
+
+    SettingService.getUserTickets(token, pageNum).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('GET USER TICKETS SERVICE UNKNOWN ERROR'))
+    })
+}
+
+exports.getUserReplies = async (req, res) => {
+    const token = req.cookies.token
+    const pageNum = req.body.pageNum
+
+    SettingService.getUserReplies(token, pageNum).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('GET USER REPLIES SERVICE UNKNOWN ERROR'))
+    })
+}
+
 exports.logout = async (req, res) => {
     res.cookie('token', {expires: Date.now()})
     msg.sendMsg(res, msg.successMsg({},'LOGOUT SUCCESS'))

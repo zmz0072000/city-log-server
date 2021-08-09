@@ -5,13 +5,14 @@ const router = require("express").Router()
 const userController = require("../controllers/user.controller")
 
 //改成"/setting/"
-router.get("/", userController.getUserInfo)
+router.get("/setting/", userController.getUserInfo)
 
 //改成"/setting/"
-router.put("/", userController.updateUserInfo)
+router.put("/setting/", userController.updateUserInfo)
 
-//TODO：增加"/tickets/"
+router.get("/tickets/", userController.getUserTickets)
 
+router.get("/replies/", userController.getUserReplies)
 
 router.put("/pwd/", userController.updateUserPwd)
 

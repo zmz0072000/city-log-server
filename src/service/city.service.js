@@ -57,7 +57,7 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
         }
         console.log('order: '.red+order)
         let offset = (pageNum - 1) * 10
-        if (offset <= 0) {
+        if (offset < 0) {
             offset = 0
         }
         const cityTickets = await Db.Ticket.findAll({

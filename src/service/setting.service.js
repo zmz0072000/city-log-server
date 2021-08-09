@@ -91,4 +91,97 @@ const updateUserPwd = async (token, pwd) => {
     }
 }
 
-module.exports = {getUserInfo, updateUserInfo, updateUserPwd}
+const getUserHistoryAuth = async (token) => {
+    const {user, error} = await Permission.getPermission(token).then(user => {
+        return {user, error: null}
+    }).catch((e) => {
+        return {user: null, error: e.toString()}
+    })
+    return {user, error}
+}
+
+const getUserTickets = async (token, pageNum = 1) => {
+    try {
+        const {user, error} = await getUserHistoryAuth(token)
+        if (user === null) {
+            return msg.failMsg('authorization failed: '+error)
+        }
+
+        let offset = (pageNum - 1) * 10
+        if (offset < 0) {
+            offset = 0
+        }
+
+        const userTickets = await Db.Ticket.findAll({
+            where: {
+                ticketAuthorId: user.get('id')
+            },
+            attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
+            order: [['createdAt', 'DESC']],
+            limit: 10,
+            offset: offset
+        })
+
+        const userTicketCount = await Db.Ticket.count({
+            where: {
+                ticketAuthorId: user.get('id')
+            }
+        })
+        const totalPage = Math.ceil(userTicketCount / 10.0)
+
+        const data = {
+            totalPage, userTickets
+        }
+
+        return msg.successMsg(data, 'get user tickets success')
+
+    } catch (e) {
+        return msg.failMsg('get user tickets failed: internal error', e.toString())
+    }
+}
+
+const getUserReplies = async (token, pageNum = 1) => {
+    try {
+        const {user, error} = await getUserHistoryAuth(token)
+        if (user === null) {
+            return msg.failMsg('authorization failed: '+error)
+        }
+
+        let offset = (pageNum - 1) * 10
+        if (offset < 0) {
+            offset = 0
+        }
+
+        const userReplies = await Db.Reply.findAll({
+            where: {
+                replyAuthorId: user.get('id')
+            },
+            attributes: ['id', 'content', 'createdAt'],
+            include: [
+                {model: Db.Ticket, attributes: ['id', 'title']}
+            ],
+            order: [['createdAt', 'DESC']],
+            limit: 10,
+            offset: offset
+        })
+
+        const userRepliesCount = await Db.Reply.count({
+            where: {
+                replyAuthorId: user.get('id')
+            }
+        })
+        const totalPage = Math.ceil(userRepliesCount / 10.0)
+
+        const data = {
+            totalPage, userReplies
+        }
+
+        return msg.successMsg(data, 'get user replies success')
+
+
+    } catch (e) {
+        return msg.failMsg('get user replies failed: internal error', e.toString())
+    }
+}
+
+module.exports = {getUserInfo, updateUserInfo, updateUserPwd, getUserTickets, getUserReplies}
