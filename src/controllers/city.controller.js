@@ -13,8 +13,7 @@ exports.getCityInfo = async (req, res) => {
 }
 
 exports.getCityTickets = async (req, res) => {
-    const cityId = req.query.id
-    const {status, priority, isDesc, pageNum} = req.body
+    const {cityId, status, priority, isDesc, pageNum} = req.query
     CityService.getCityTickets(cityId, status, priority, isDesc, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {

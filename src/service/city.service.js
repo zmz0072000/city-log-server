@@ -88,4 +88,16 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
 
 }
 
+// const getLandingInfo = async () => {
+//     try {
+//         const newTickets = await Db.Ticket.findAll({
+//             attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
+//             order: [['createdAt', 'DESC']],
+//
+//         })
+//     } catch (e) {
+//         return msg.failMsg('get landing page data failed: internal error', e.toString())
+//     }
+// }
+
 module.exports = {getCityInfo, getCityTickets}

@@ -39,7 +39,7 @@ exports.updateUserPwd = async (req, res) => {
 
 exports.getUserTickets = async (req, res) => {
     const token = req.cookies.token
-    const pageNum = req.body.pageNum
+    const pageNum = req.query.pageNum
 
     SettingService.getUserTickets(token, pageNum).then(result => {
         msg.sendMsg(res, result)
@@ -50,7 +50,7 @@ exports.getUserTickets = async (req, res) => {
 
 exports.getUserReplies = async (req, res) => {
     const token = req.cookies.token
-    const pageNum = req.body.pageNum
+    const pageNum = req.query.pageNum
 
     SettingService.getUserReplies(token, pageNum).then(result => {
         msg.sendMsg(res, result)
