@@ -13,8 +13,8 @@ exports.getCityInfo = async (req, res) => {
 }
 
 exports.getCityTickets = async (req, res) => {
-    const {cityId, status, priority, isDesc, pageNum} = req.query
-    CityService.getCityTickets(cityId, status, priority, isDesc, pageNum).then(result => {
+    const {id, status, priority, isDesc, pageNum} = req.query
+    CityService.getCityTickets(id, status, priority, isDesc, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
         msg.sendMsg(res, msg.failMsg('CITY TICKET SERVICE UNKNOWN ERROR'), e)
