@@ -2,6 +2,11 @@ const nodemailer = require('nodemailer')
 require('colors')
 require('dotenv').config()
 
+/**
+ * Helper method to generate html content for pwd reset email
+ * @param {!string} link - starting part of link
+ * @returns {string} - Full HTML email
+ */
 const generateEmail = (link) => {
     return "<h2>CITYLOG</h2>\n" +
         "<p>Dear customer,</p>\n" +
@@ -12,6 +17,9 @@ const generateEmail = (link) => {
         "<p>CITYLOG team</p>"
 }
 
+/**
+ * Config of transporter
+ */
 const config = {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -27,6 +35,12 @@ const config = {
 
 const transporter = nodemailer.createTransport(config)
 
+/**
+ * Use nodemailer to send password reset email to user
+ * @param {!string} userEmail - user email
+ * @param {!string} token - token part of link
+ * @returns {Promise<*>} - Error if failed, envelope part of returned info if successed
+ */
 exports.sendEmail = async (userEmail, token) => {
     const link = process.env.EMAIL_LINK+token
 

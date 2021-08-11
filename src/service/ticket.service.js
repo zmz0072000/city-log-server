@@ -287,6 +287,12 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content, ty
     }
 }
 
+/**
+ * Delete a ticket
+ * @param {?string} token - token to create ticket
+ * @param {!number} ticketId - ticket id to modify
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const deleteTicket = async (token, ticketId) => {
     try {
         const authResult = await modifyAuth(token, ticketId)

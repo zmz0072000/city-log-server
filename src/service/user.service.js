@@ -4,8 +4,24 @@ const {createToken} = require('../utils/Permission')
 
 const {User, City} = require('../model/Database');
 
+/**
+ * Register new user
+ * @param {!string} email
+ * @param {!string} pwd
+ * @param {!string} name
+ * @param {!number} city
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const register = async (email, pwd, name, city) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {email, pwd, name, city}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing:  '+object)
+            }
+        }
+
         const userCount = await User.count({
             where: {
                 email: email
@@ -45,9 +61,23 @@ const register = async (email, pwd, name, city) => {
     }
 }
 
+/**
+ * User login
+ * @param {!string} email
+ * @param {!string} pwd
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const login = async (email, pwd) => {
     let user = null
     try {
+        //undefined check for all objects
+        const nonNullObjects = {email, pwd}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing:  '+object)
+            }
+        }
+
          user = await User.findOne({
             where: {
                 email: email

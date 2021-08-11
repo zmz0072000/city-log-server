@@ -4,6 +4,11 @@ const secret = process.env.SECRET;
 
 const {User, Group, City} = require('../model/Database');
 
+/**
+ * Generate a token with email
+ * @param {!string} email - user email used to make token
+ * @returns {*} - token
+ */
 const createToken = (email) => {
     return jsonwebtoken.sign({
         email
@@ -12,6 +17,11 @@ const createToken = (email) => {
     })
 }
 
+/**
+ * check if a user token is valid
+ * @param token - token to be check
+ * @returns {Promise} - throw error with detailed message if token is invalid, return user behind the token if success
+ */
 const getPermission = async (token) => {
     if (typeof token === 'undefined') throw 'empty token, please login again'
     let decoded = ''
@@ -41,6 +51,11 @@ const getPermission = async (token) => {
     }
 }
 
+/**
+ * Use different secret to generate token for password resetting
+ * @param {!string} email - user email used to make token
+ * @returns {*} - token
+ */
 const createResetToken = (email) => {
     return jsonwebtoken.sign({
         email
@@ -49,6 +64,11 @@ const createResetToken = (email) => {
     })
 }
 
+/**
+ * check if a reset token is valid
+ * @param token - token to be check
+ * @returns {Promise} - throw error with detailed message if token is invalid, return user behind the token if success
+ */
 const getResetPermission = async (token) => {
     if (typeof token === 'undefined') throw 'empty token, require reset email again'
     let decoded = ''
