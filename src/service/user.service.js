@@ -35,7 +35,6 @@ const register = async (email, pwd, name, city) => {
         })
 
         if (typeof newUser !== 'undefined'){
-            console.log("register: success")
             return msg.successMsg(null, 'Register success!')
         } else {
             console.log("register: failed due to unknown reason")

@@ -11,11 +11,11 @@ module.exports = {
         return new Message(200, data, message)
     },
     failedMsg(message = 'failed') {
-        console.log('[WARNING] FAIL MESSAGE SENT: '.yellow + message)
+        console.log('[WARNING] FAIL MESSAGE SENT: ' + message)
         return new Message(403, {}, message)
     },
     errorMsg(err, message = 'ERROR') {
-        console.error('[ERROR] ERROR MESSAGE SENT: '.red + message)
+        console.log('[ERROR] ERROR MESSAGE SENT: ' + message)
         console.log('REASON: '.red + err.toString())
         return new Message(500, {}, message)
     },
