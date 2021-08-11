@@ -4,8 +4,17 @@ require('colors')
 
 // Get: api/city
 // Params: ?cityId=1
-
+/**
+ * Return information of a city and its trending tickets
+ * @param {!number} cityId - id of querying city
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getCityInfo = async (cityId) => {
+    //undefined check
+    if (typeof cityId === 'undefined') {
+        return msg.failedMsg('Invalid input format')
+    }
+
     try {
         // city exist check
         const city = await Db.City.findOne({
@@ -17,7 +26,7 @@ const getCityInfo = async (cityId) => {
         if (typeof city === 'undefined') {
             return msg.failedMsg('get city info failed: city not exist')
         }
-
+        //recent posts
         const recentTickets = await Db.Ticket.findAll({
             attributes: ['id', 'title', 'createdAt'],
             include: [
@@ -30,14 +39,26 @@ const getCityInfo = async (cityId) => {
         const data = {city, recentTickets}
 
         return msg.successMsg(data, 'get city success')
-
-        //recent posts
     } catch (e) {
         return msg.errorMsg(e,'get city info failed: internal error')
     }
 }
 
+/**
+ * Query all tickets within a city
+ * @param {!number} cityId - id of querying city
+ * @param {?boolean} status - status filter
+ * @param {?number} priority - priority filter
+ * @param {?boolean} isDesc - if true, oldest ticket will be shown first
+ * @param {?number} pageNum - number of page to query
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum = 1) => {
+    //undefined check
+    if (typeof cityId === 'undefined') {
+        return msg.failedMsg('Invalid input format')
+    }
+
     try {
         let where = {
             CityId: cityId
@@ -88,6 +109,10 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
 
 }
 
+/**
+ * Query information to show on the landing page
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getLandingInfo = async () => {
     try {
         const newTickets = await Db.Ticket.findAll({

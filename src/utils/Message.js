@@ -5,6 +5,7 @@ function Message(code, data, message) {
 }
 
 module.exports = {
+    Message,
     // Send a success message and proceed data
     successMsg(data = null, message = 'success') {
         return new Message(200, data, message)
