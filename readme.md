@@ -12,7 +12,19 @@ This program requires NodeJs running environment. Required packages are
 listed in the ```package.json``` file
 
 ### Program options
-To adjust options, change the variables in the ```.env``` file
+To adjust options, change the variables in the ```.env``` file  
+
+|Variable | Meaning|
+|--------- | --------|
+DATABASE_URL|postgres url for the database
+SECRET|secret used for token generation
+PORT|port for the server
+EMAIL_HOST|smtp email host
+EMAIL_PORT|smtp email port
+EMAIL_USER|smtp username
+EMAIL_PASS|smtp password
+EMAIL_LINK|First part of password reset link (decided by frontend member)
+
 
 ### Program running instruction and outputs
 - To start the server, use ```npm run start```
@@ -27,8 +39,14 @@ Application running on the port:  3010
 
 
 ### File Structure
-
-
+This backend part of server contains 3 layers of structures below the app:
+- Routes: shows the url used by each controller. 6 routes can be found in ```routes``` folder
+- Controllers: controllers in this project are only for retrieve data and sending message. Message
+will be produced from services. 6 controllers can be found in ```controllers``` folder
+- Services: services in this project uses variables as input and all has Message class 
+  (shown in ```/utils/Message.js```) as output.  
+  
+For specific usage of each file, see JSDoc comment in each file.
 ### Testing
 To run the automated testing script, use ```npm run test```
 
