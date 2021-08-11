@@ -10,9 +10,12 @@ require('colors')
  * @returns {Promise<Message>} - Message class to send, code in message shows running result
  */
 const getCityInfo = async (cityId) => {
-    //undefined check
-    if (typeof cityId === 'undefined') {
-        return msg.failedMsg('Invalid input format')
+    //undefined check for all objects
+    const nonNullObjects = {cityId}
+    for (const object in nonNullObjects) {
+        if (!nonNullObjects[object]) {
+            return msg.failedMsg('Invalid input format, missing '+object)
+        }
     }
 
     try {
@@ -54,9 +57,12 @@ const getCityInfo = async (cityId) => {
  * @returns {Promise<Message>} - Message class to send, code in message shows running result
  */
 const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum = 1) => {
-    //undefined check
-    if (typeof cityId === 'undefined') {
-        return msg.failedMsg('Invalid input format')
+    //undefined check for all objects
+    const nonNullObjects = {cityId}
+    for (const object in nonNullObjects) {
+        if (!nonNullObjects[object]) {
+            return msg.failedMsg('Invalid input format, missing '+object)
+        }
     }
 
     try {

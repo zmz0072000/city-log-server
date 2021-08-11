@@ -4,8 +4,14 @@ const msg = require('../utils/Message')
 const Email = require('../utils/Email')
 const bcrypt = require('bcrypt');
 
+/**
+ * Get user settings from token
+ * @param {?string} token - token from cookie
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getUserInfo = async (token) => {
     try {
+        //call permission method
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
@@ -14,6 +20,8 @@ const getUserInfo = async (token) => {
         if (user === null) {
             return msg.failedMsg('authorization failed: '+error)
         }
+
+        //Db access
         const {email, name, CityId, GroupId} = user
         return msg.successMsg({email, name, CityId, GroupId},
             'get user info success')
@@ -22,8 +30,17 @@ const getUserInfo = async (token) => {
     }
 }
 
+/**
+ * Change user settings, and provide new token if email changed
+ * @param {?string} token - token from cookie
+ * @param {?string} email - new email
+ * @param {?string} name - new name
+ * @param {?number} CityId - new city id
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const updateUserInfo = async (token, email, name, CityId) => {
     try {
+        //Call permission method
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
@@ -43,6 +60,7 @@ const updateUserInfo = async (token, email, name, CityId) => {
             }
         }
 
+        //Db access
         const newUserInfo = {
             email: email,
             name: name,
@@ -56,6 +74,7 @@ const updateUserInfo = async (token, email, name, CityId) => {
             console.log('database access error: '+e)
             throw 'database access error'
         })
+        //Give new token if necessary
         let newToken
         if (typeof email !== 'undefined'){
             newToken = Permission.createToken(email)
@@ -68,15 +87,29 @@ const updateUserInfo = async (token, email, name, CityId) => {
     }
 }
 
+/**
+ * Change user password
+ * @param {?string} token
+ * @param {!string} pwd
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const updateUserPwd = async (token, pwd) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {pwd}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failedMsg('authorization failed: '+error)
+            return msg.failedMsg('update pwd authorization failed: '+error)
         }
         const newUserInfo = {
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync())
@@ -92,6 +125,11 @@ const updateUserPwd = async (token, pwd) => {
     }
 }
 
+/**
+ * Helper method to get user's ticket/reply history
+ * @param {?string} token - token from cookie
+ * @returns {Promise<{error: *, user: User}>} - error if failed, User if found
+ */
 const getUserHistoryAuth = async (token) => {
     const {user, error} = await Permission.getPermission(token).then(user => {
         return {user, error: null}
@@ -101,18 +139,27 @@ const getUserHistoryAuth = async (token) => {
     return {user, error}
 }
 
+/**
+ * Get all tickets with current user in token as author
+ * @param {?string} token - token from cookie
+ * @param {?number} pageNum - number of page, default 1
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getUserTickets = async (token, pageNum = 1) => {
     try {
+        // Call helper method
         const {user, error} = await getUserHistoryAuth(token)
         if (user === null) {
             return msg.failedMsg('authorization failed: '+error)
         }
 
+        //calculate offset, should be non-negative
         let offset = (pageNum - 1) * 10
         if (offset < 0) {
             offset = 0
         }
 
+        //access db
         const userTickets = await Db.Ticket.findAll({
             where: {
                 ticketAuthorId: user.get('id')
@@ -123,6 +170,7 @@ const getUserTickets = async (token, pageNum = 1) => {
             offset: offset
         })
 
+        //count from db to get page number
         const userTicketCount = await Db.Ticket.count({
             where: {
                 ticketAuthorId: user.get('id')
@@ -141,13 +189,21 @@ const getUserTickets = async (token, pageNum = 1) => {
     }
 }
 
+/**
+ * Get all replies with current user in token as author
+ * @param {?string} token - token from cookie
+ * @param {?number} pageNum - number of page, default 1
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getUserReplies = async (token, pageNum = 1) => {
     try {
+        // Call helper method
         const {user, error} = await getUserHistoryAuth(token)
         if (user === null) {
             return msg.failedMsg('authorization failed: '+error)
         }
 
+        //calculate offset, should be non-negative
         let offset = (pageNum - 1) * 10
         if (offset < 0) {
             offset = 0
@@ -166,6 +222,7 @@ const getUserReplies = async (token, pageNum = 1) => {
             offset: offset
         })
 
+        //access db
         const userRepliesCount = await Db.Reply.count({
             where: {
                 replyAuthorId: user.get('id')
@@ -177,6 +234,7 @@ const getUserReplies = async (token, pageNum = 1) => {
             totalPage, userReplies
         }
 
+        //count from db to get page number
         return msg.successMsg(data, 'get user replies success')
 
 
@@ -185,6 +243,11 @@ const getUserReplies = async (token, pageNum = 1) => {
     }
 }
 
+/**
+ * Send a password recovery email to certain email. Returned message contains sending address and receiving address
+ * @param {!string} email - email address to send
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const sendRecoverEmail = async (email) => {
     try {
         const userCount = await Db.User.count({
@@ -204,8 +267,22 @@ const sendRecoverEmail = async (email) => {
     }
 }
 
+/**
+ * Use token from recovery email to change password
+ * @param token
+ * @param {!string} pwd - new password
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const recoverPwd = async (token, pwd) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {pwd}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
         const {user, error} = await Permission.getResetPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {

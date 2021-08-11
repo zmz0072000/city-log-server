@@ -3,8 +3,29 @@ const Permission = require('../utils/Permission')
 const msg = require('../utils/Message')
 require('colors')
 
+/**
+ * Create a ticket
+ * @param {?string} token - token to create ticket
+ * @param {!string} title - title
+ * @param {!number} city - city of ticket
+ * @param {!number} lat - Latitude
+ * @param {!number} long - Latitude
+ * @param {!string} content - Longitude
+ * @param {!number} type - type
+ * @param {!number} priority - priority
+ * @param {!boolean} status - status
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const createTicket = async (token, title, city, lat, long, content, type, priority, status) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {title, city, lat, long, content, type, priority, status}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
@@ -43,8 +64,21 @@ const createTicket = async (token, title, city, lat, long, content, type, priori
     }
 }
 
+/**
+ * Find a ticket with certain id
+ * @param {!number} id - ticket id
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getTicket = async (id) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {id}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
         const ticket = await Db.Ticket.findOne({
             where: {
                 id: id
@@ -70,6 +104,13 @@ const getTicket = async (id) => {
     }
 }
 
+/**
+ * Helper function to authenticate ticket modification
+ * @param {?string} token - string from cookie
+ * @param {!number} ticketId - id of ticket to vote
+ * @param {!boolean} isRating - if true, calculate permission based on who can rate ticket
+ * @returns {Promise<{error: string}|{ticket, user}>} - error if failed, ticket and user if success
+ */
 const modifyAuth = async (token, ticketId, isRating = false) => {
     try {
         const {user, error} = await Permission.getPermission(token).then(user => {
@@ -122,6 +163,13 @@ const modifyAuth = async (token, ticketId, isRating = false) => {
     }
 }
 
+/**
+ * Vote good or bad for a ticket
+ * @param {?string} token - token from cookie
+ * @param {!number} ticketId - ticket id to vote
+ * @param {!number} score - score to vote for ticket. 1 for upvote, -1 for down vote, 0 for cancelling
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const voteTicket = async (token, ticketId, score) => {
     try {
         if (score > 1 || score < -1) {
@@ -164,6 +212,12 @@ const voteTicket = async (token, ticketId, score) => {
     }
 }
 
+/**
+ * Get current vote state for a user
+ * @param {?string} token - token from cookie
+ * @param {!number} ticketId - ticket id to vote
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const getMyVote = async (token, ticketId) => {
     try {
         let currentRate = 0
@@ -191,8 +245,30 @@ const getMyVote = async (token, ticketId) => {
     }
 }
 
+/**
+ * Modify a ticket
+ * @param {?string} token - token to create ticket
+ * @param {!number} ticketId - ticket id to modify
+ * @param {?string} title - title
+ * @param {?number} city - city of ticket
+ * @param {?number} lat - Latitude
+ * @param {?number} long - Latitude
+ * @param {?string} content - Longitude
+ * @param {?number} type - type
+ * @param {?number} priority - priority
+ * @param {?boolean} status - status
+ * @returns {Promise<Message>} - Message class to send, code in message shows running result
+ */
 const modifyTicket = async (token, ticketId, title, city, lat, long, content, type, priority, status) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {ticketId}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
             return msg.failedMsg('modify ticket failed: '+authResult.error)

@@ -12,9 +12,12 @@ require('colors')
  */
 const createReply = async (token, ticketId, content) => {
     try {
-        //undefined check
-        if (typeof ticketId === 'undefined') {
-            return msg.failedMsg('Invalid input format')
+        //undefined check for all objects
+        const nonNullObjects = {ticketId}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing:  '+object)
+            }
         }
 
         //Get permission
@@ -49,7 +52,6 @@ const createReply = async (token, ticketId, content) => {
             return reply
         })
         if (typeof newReply !== 'undefined') {
-            console.log("create reply: success")
             return msg.successMsg(null, 'create reply success')
         } else {
             return msg.errorMsg('db create empty return value', 'create reply error: unknown reason')
@@ -63,7 +65,7 @@ const createReply = async (token, ticketId, content) => {
  * Helper function to make authentication for reply modification
  * @param {!string} token - token from cookie
  * @param {!number} replyId - reply to modify
- * @returns {Promise<{error: string}|{reply: Db.Reply}>} - error if auth failed, Reply class if success
+ * @returns {Promise<{error: string}|{reply: Reply}>} - error if auth failed, Reply class if success
  */
 const modifyAuth = async (token, replyId) => {
     try {
@@ -122,9 +124,12 @@ const modifyAuth = async (token, replyId) => {
  */
 const modifyReply = async (token, replyId, content) => {
     try {
-        //undefined check
-        if (typeof replyId === 'undefined') {
-            return msg.failedMsg('Invalid input format')
+        //undefined check for all objects
+        const nonNullObjects = {replyId}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing: '+object)
+            }
         }
 
         //Use helper function
@@ -154,9 +159,12 @@ const modifyReply = async (token, replyId, content) => {
  */
 const deleteReply = async (token, replyId) => {
     try {
-        //undefined check
-        if (typeof replyId === 'undefined') {
-            return msg.failedMsg('Invalid input format')
+        //undefined check for all objects
+        const nonNullObjects = {replyId}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
         }
         //call helper function
         const authResult = await modifyAuth(token, replyId)
