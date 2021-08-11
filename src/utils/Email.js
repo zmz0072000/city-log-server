@@ -5,7 +5,7 @@ require('dotenv').config()
 const generateEmail = (link) => {
     return "<h2>CITYLOG</h2>\n" +
         "<p>Dear customer,</p>\n" +
-        "<p>Please click the linke below to reset your password.</p>\n" +
+        "<p>Please click the link below to reset your password.</p>\n" +
         "<p>If you didn't require this email, please ignore it.</p>" +
         `<p><a href=\"${link}\">Click me to reset password</a></p>\n` +
         "<p>Sincerely,</p>\n" +
