@@ -8,7 +8,7 @@ exports.getUserInfo = async (req, res) => {
     SettingService.getUserInfo(token).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET USER INFO SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'GET USER INFO SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -22,7 +22,7 @@ exports.updateUserInfo = async (req, res) => {
         }
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('MODIFY USER INFO SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'MODIFY USER INFO SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -33,7 +33,7 @@ exports.updateUserPwd = async (req, res) => {
     SettingService.updateUserPwd(token, pwd).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('MODIFY USER PASSWORD SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'MODIFY USER PASSWORD SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -44,7 +44,7 @@ exports.getUserTickets = async (req, res) => {
     SettingService.getUserTickets(token, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET USER TICKETS SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'GET USER TICKETS SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -55,7 +55,7 @@ exports.getUserReplies = async (req, res) => {
     SettingService.getUserReplies(token, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET USER REPLIES SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'GET USER REPLIES SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -65,7 +65,7 @@ exports.sendRecoverEmail = async (req, res) => {
     SettingService.sendRecoverEmail(email).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('SEND RECOVER EMAIL SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'SEND RECOVER EMAIL SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -74,7 +74,7 @@ exports.recoverPwd = async (req, res) => {
     SettingService.recoverPwd(token, pwd).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('RECOVER PASSWORD SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'RECOVER PASSWORD SERVICE UNKNOWN ERROR'))
     })
 }
 

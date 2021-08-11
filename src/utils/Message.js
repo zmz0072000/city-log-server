@@ -9,17 +9,14 @@ module.exports = {
     successMsg(data = null, message = 'success') {
         return new Message(200, data, message)
     },
-    // Send a failure message
-    failMsg(message = 'failed', err) {
-        let code = 403
-        if (typeof err === 'undefined') {
-            console.log('[WARNING] FAIL MESSAGE SENT: '.yellow + message)
-        } else {
-            code = 500
-            console.log('[ERROR] ERROR MESSAGE SENT: '.red + message)
-            console.log('REASON: '.red + err)
-        }
-        return new Message(code, null, message)
+    failedMsg(message = 'failed') {
+        console.log('[WARNING] FAIL MESSAGE SENT: '.yellow + message)
+        return new Message(403, {}, message)
+    },
+    errorMsg(err, message = 'ERROR') {
+        console.error('[ERROR] ERROR MESSAGE SENT: '.red + message)
+        console.log('REASON: '.red + err.toString())
+        return new Message(500, {}, message)
     },
     sendMsg(res, message) {
         res.statusCode = message.code

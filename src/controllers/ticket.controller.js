@@ -8,7 +8,7 @@ exports.createTicket = async (req, res) => {
     TicketService.createTicket(token, title, city, lat, long, content, type, priority, status).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('CREATE TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'CREATE TICKET SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -17,7 +17,7 @@ exports.getTicket = async (req, res) => {
     TicketService.getTicket(id).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'GET TICKET SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -27,7 +27,7 @@ exports.getMyRate = async (req, res) => {
     TicketService.getMyVote(token, ticketId).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET MY VOTE SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'GET MY VOTE SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -40,7 +40,7 @@ exports.modifyTicket = async (req, res) => {
     TicketService.modifyTicket(token, ticketId, title, city, lat, long, content, type, priority, status).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('MODIFY TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'MODIFY TICKET SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -51,7 +51,7 @@ exports.voteTicket = async (req, res) => {
     TicketService.voteTicket(token, ticketId, score).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('VOTE TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'VOTE TICKET SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -62,6 +62,6 @@ exports.deleteTicket = async (req, res) => {
         msg.sendMsg(res, result)
     }).catch((e) => {
         console.log('ERROR'.red+JSON.stringify(e))
-        msg.sendMsg(res, msg.failMsg('DELETE TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'DELETE TICKET SERVICE UNKNOWN ERROR'))
     })
 }

@@ -11,7 +11,7 @@ const createTicket = async (token, title, city, lat, long, content, type, priori
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
         // city exist check
         const userCity = await Db.City.findOne({
@@ -23,7 +23,7 @@ const createTicket = async (token, title, city, lat, long, content, type, priori
         })
         const authorId = user.get('id')
         if (!userCity) {
-            return msg.failMsg('create ticket error: city not exist')
+            return msg.failedMsg('create ticket error: city not exist')
         }
         const newTicket = await Db.Ticket.create({
             title, lat, long, content, type, priority, status,
@@ -36,10 +36,10 @@ const createTicket = async (token, title, city, lat, long, content, type, priori
             console.log("create ticket: success")
             return msg.successMsg(null, 'create ticket success')
         } else {
-            return msg.failMsg('create ticket error: unknown reason', 'db create empty return value')
+            return msg.errorMsg('db create empty return value', 'create ticket error: unknown reason')
         }
     } catch (e) {
-        return msg.failMsg('create ticket failed: internal error', e.toString())
+        return msg.errorMsg(e, 'create ticket failed: internal error')
     }
 }
 
@@ -62,11 +62,11 @@ const getTicket = async (id) => {
             return ticket
         })
         if (!ticket) {
-            return msg.failMsg('get ticket failed: ticket not exist')
+            return msg.failedMsg('get ticket failed: ticket not exist')
         }
         return msg.successMsg(ticket, 'get ticket success')
     } catch (e) {
-        return msg.failMsg('create ticket failed: internal error', e.toString())
+        return msg.errorMsg(e, 'create ticket failed: internal error')
     }
 }
 
@@ -125,12 +125,12 @@ const modifyAuth = async (token, ticketId, isRating = false) => {
 const voteTicket = async (token, ticketId, score) => {
     try {
         if (score > 1 || score < -1) {
-            return msg.failMsg('rate ticket failed: invalid score')
+            return msg.failedMsg('rate ticket failed: invalid score')
         }
 
         const authResult = await modifyAuth(token, ticketId, true)
         if (!authResult.ticket) {
-            return msg.failMsg('rate ticket failed: '+authResult.error)
+            return msg.failedMsg('rate ticket failed: '+authResult.error)
         }
         const currentRate = await Db.Rate.findOne ({
             where: {
@@ -160,7 +160,7 @@ const voteTicket = async (token, ticketId, score) => {
 
         return msg.successMsg({newRateSum: rateSum},'rate ticket success')
     } catch (e) {
-        return msg.failMsg('rate ticket failed: internal error', e.toString())
+        return msg.errorMsg(e, 'rate ticket failed: internal error')
     }
 }
 
@@ -187,7 +187,7 @@ const getMyVote = async (token, ticketId) => {
         return msg.successMsg({currentRate}, 'get current rate of user success')
 
     } catch (e) {
-        return msg.failMsg('get current rate failed: internal error', e.toString())
+        return msg.errorMsg(e, 'get current rate failed: internal error')
     }
 }
 
@@ -195,7 +195,7 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content, ty
     try {
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
-            return msg.failMsg('modify ticket failed: '+authResult.error)
+            return msg.failedMsg('modify ticket failed: '+authResult.error)
         }
         const ticket = authResult.ticket
 
@@ -207,7 +207,7 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content, ty
         return msg.successMsg(null, 'modify ticket success')
 
     } catch (e) {
-        return msg.failMsg('modify ticket failed: internal error', e.toString())
+        return msg.errorMsg(e, 'modify ticket failed: internal error')
     }
 }
 
@@ -215,13 +215,13 @@ const deleteTicket = async (token, ticketId) => {
     try {
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
-            return msg.failMsg('delete ticket failed: '+authResult.error)
+            return msg.failedMsg('delete ticket failed: '+authResult.error)
         }
         const ticket = authResult.ticket
         await ticket.destroy()
         return msg.successMsg('delete ticket success')
     } catch (e) {
-        return msg.failMsg('delete ticket failed: internal error', e.toString())
+        return msg.errorMsg(e, 'delete ticket failed: internal error')
     }
 }
 

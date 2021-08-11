@@ -8,7 +8,7 @@ exports.getCityInfo = async (req, res) => {
     CityService.getCityInfo(id).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('CITY INFO SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e, 'CITY INFO SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -17,7 +17,7 @@ exports.getCityTickets = async (req, res) => {
     CityService.getCityTickets(id, status, priority, isDesc, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('CITY TICKET SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e, 'CITY TICKET SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -25,6 +25,6 @@ exports.getLandingInfo = async (req, res) => {
     CityService.getLandingInfo().then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('LANDING INFO SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'LANDING INFO SERVICE UNKNOWN ERROR'))
     })
 }

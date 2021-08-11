@@ -12,13 +12,13 @@ const getUserInfo = async (token) => {
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
         const {email, name, CityId, GroupId} = user
         return msg.successMsg({email, name, CityId, GroupId},
             'get user info success')
     } catch (e) {
-        return msg.failMsg('get user info failed: internal error', e.toString())
+        return msg.errorMsg(e, 'get user info failed: internal error')
     }
 }
 
@@ -29,17 +29,20 @@ const updateUserInfo = async (token, email, name, CityId) => {
         }).catch((e) => {
             return {user: null, error: e.toString()}
         })
-        if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+        if (!user) {
+            return msg.failedMsg('authorization failed: '+error)
         }
-        const userCount = await Db.User.count({
-            where: {
-                email: email
+        if (email) {
+            const userCount = await Db.User.count({
+                where: {
+                    email: email
+                }
+            })
+            if (userCount !== 0) {
+                return msg.failedMsg('Register error: user already exists')
             }
-        })
-        if (userCount !== 0) {
-            return msg.failMsg('Register error: user already exists')
         }
+
         const newUserInfo = {
             email: email,
             name: name,
@@ -47,7 +50,7 @@ const updateUserInfo = async (token, email, name, CityId) => {
         }
         await Db.User.update(newUserInfo, {
             where: {
-                id: user.get('id')
+                email: user.get('email')
             }
         }).catch((e) => {
             console.log('database access error: '+e)
@@ -61,7 +64,7 @@ const updateUserInfo = async (token, email, name, CityId) => {
         }
         return msg.successMsg({token: newToken}, 'update info success')
     } catch (e) {
-        return msg.failMsg('update user info failed: internal error', e.toString())
+        return msg.errorMsg(e, 'update user info failed: internal error')
     }
 }
 
@@ -73,7 +76,7 @@ const updateUserPwd = async (token, pwd) => {
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
         const newUserInfo = {
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync())
@@ -85,7 +88,7 @@ const updateUserPwd = async (token, pwd) => {
         })
         return msg.successMsg({}, 'update info success')
     } catch (e) {
-        return msg.failMsg('update user info failed: internal error', e.toString())
+        return msg.errorMsg(e, 'update user info failed: internal error')
     }
 }
 
@@ -102,7 +105,7 @@ const getUserTickets = async (token, pageNum = 1) => {
     try {
         const {user, error} = await getUserHistoryAuth(token)
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
 
         let offset = (pageNum - 1) * 10
@@ -134,7 +137,7 @@ const getUserTickets = async (token, pageNum = 1) => {
         return msg.successMsg(data, 'get user tickets success')
 
     } catch (e) {
-        return msg.failMsg('get user tickets failed: internal error', e.toString())
+        return msg.errorMsg(e, 'get user tickets failed: internal error')
     }
 }
 
@@ -142,7 +145,7 @@ const getUserReplies = async (token, pageNum = 1) => {
     try {
         const {user, error} = await getUserHistoryAuth(token)
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
 
         let offset = (pageNum - 1) * 10
@@ -178,7 +181,7 @@ const getUserReplies = async (token, pageNum = 1) => {
 
 
     } catch (e) {
-        return msg.failMsg('get user replies failed: internal error', e.toString())
+        return msg.errorMsg(e, 'get user replies failed: internal error')
     }
 }
 
@@ -190,14 +193,14 @@ const sendRecoverEmail = async (email) => {
             }
         })
         if (userCount === 0) {
-            return msg.failMsg('Send recover email failed: no such email registered')
+            return msg.failedMsg('Send recover email failed: no such email registered')
         }
 
         const token = Permission.createResetToken(email)
         const data = await Email.sendEmail(email, token)
         return msg.successMsg(data, 'send recover email success')
     } catch (e) {
-        return msg.failMsg('send recover email failed: internal error', e.toString())
+        return msg.errorMsg(e, 'send recover email failed: internal error')
     }
 }
 
@@ -209,7 +212,7 @@ const recoverPwd = async (token, pwd) => {
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failMsg('reset pwd authorization failed: '+error)
+            return msg.failedMsg('reset pwd authorization failed: '+error)
         }
         const newUserInfo = {
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync())
@@ -221,7 +224,7 @@ const recoverPwd = async (token, pwd) => {
         })
         return msg.successMsg({}, 'reset pwd success')
     } catch (e) {
-        return msg.failMsg('reset pwd failed: internal error', e.toString())
+        return msg.errorMsg(e, 'reset pwd failed: internal error')
     }
 }
 

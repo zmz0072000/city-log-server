@@ -10,6 +10,6 @@ exports.login = async (req, res) => {
         }
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('LOGIN SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'LOGIN SERVICE UNKNOWN ERROR'))
     })
 }

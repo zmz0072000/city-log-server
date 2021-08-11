@@ -7,6 +7,6 @@ exports.register = async (req, res) => {
     UserService.register(email, pwd, name, city).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('REGISTER SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'REGISTER SERVICE UNKNOWN ERROR'))
     })
 }

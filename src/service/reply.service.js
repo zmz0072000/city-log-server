@@ -11,7 +11,7 @@ const createReply = async (token, ticketId, content) => {
             return {user: null, error: e.toString()}
         })
         if (user === null) {
-            return msg.failMsg('authorization failed: '+error)
+            return msg.failedMsg('authorization failed: '+error)
         }
 
 
@@ -24,7 +24,7 @@ const createReply = async (token, ticketId, content) => {
         })
         const userId = user.get('id')
         if (!ticket) {
-            return msg.failMsg('create reply failed: ticket not exist')
+            return msg.failedMsg('create reply failed: ticket not exist')
         }
         const newReply = await Db.Reply.create({
             content: content,
@@ -37,10 +37,10 @@ const createReply = async (token, ticketId, content) => {
             console.log("create reply: success")
             return msg.successMsg(null, 'create reply success')
         } else {
-            return msg.failMsg('create reply error: unknown reason', 'db create empty return value')
+            return msg.errorMsg('db create empty return value', 'create reply error: unknown reason')
         }
     } catch (e) {
-        return msg.failMsg('create reply failed: internal error', e.toString())
+        return msg.errorMsg(e, 'create reply failed: internal error')
     }
 }
 
@@ -92,7 +92,7 @@ const modifyReply = async (token, replyId, content) => {
     try {
         const authResult = await modifyAuth(token, replyId)
         if (!authResult.reply){
-            return msg.failMsg('modify reply failed: '+authResult.error)
+            return msg.failedMsg('modify reply failed: '+authResult.error)
         }
         const reply = authResult.reply
 
@@ -102,7 +102,7 @@ const modifyReply = async (token, replyId, content) => {
         await reply.update(newReplyInfo)
         return msg.successMsg(null, 'modify reply success')
     } catch (e) {
-        return msg.failMsg('modify reply failed: internal error', e.toString())
+        return msg.errorMsg(e, 'modify reply failed: internal error')
     }
 }
 
@@ -110,13 +110,13 @@ const deleteReply = async (token, replyId) => {
     try {
         const authResult = await modifyAuth(token, replyId)
         if (!authResult.reply){
-            return msg.failMsg('modify reply failed: '+authResult.error)
+            return msg.failedMsg('modify reply failed: '+authResult.error)
         }
         const reply = authResult.reply
         await reply.destroy()
         return msg.successMsg(null, 'delete reply success')
     } catch (e) {
-        return msg.failMsg('delete reply failed: internal error', e.toString())
+        return msg.errorMsg(e.toString(), 'delete reply failed: internal error')
     }
 }
 

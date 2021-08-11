@@ -1,7 +1,9 @@
 const { Sequelize, DataTypes } = require('sequelize')
 const message = require('../utils/Message')
 require('dotenv').config()
-const sequelize = new Sequelize(process.env.DATABASE_URL)
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    logging: false
+})
 
 const City = sequelize.define('City', {
     name: {

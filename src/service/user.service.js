@@ -12,7 +12,7 @@ const register = async (email, pwd, name, city) => {
             }
         })
         if (userCount !== 0) {
-            return msg.failMsg('Register error: user already exists')
+            return msg.failedMsg('Register error: user already exists')
         }
 
         // city exist check
@@ -22,7 +22,7 @@ const register = async (email, pwd, name, city) => {
             }
         })
         if (typeof userCity === 'undefined') {
-            return msg.failMsg('Register error: city not exist')
+            return msg.failedMsg('Register error: city not exist')
         }
 
         console.log("REGISTER STARTED")
@@ -39,10 +39,10 @@ const register = async (email, pwd, name, city) => {
             return msg.successMsg(null, 'Register success!')
         } else {
             console.log("register: failed due to unknown reason")
-            return msg.failMsg('Register error: unknown reason', 'unknown reason (create returned empty result)')
+            return msg.errorMsg('unknown reason (create returned empty result)', 'Register error: unknown reason')
         }
     } catch (e) {
-        return msg.failMsg('Register error: internal error', e.toString())
+        return msg.errorMsg(e, 'Register error: internal error')
     }
 }
 
@@ -55,10 +55,10 @@ const login = async (email, pwd) => {
             }
         })
     } catch (e) {
-        return msg.failMsg('login internal error', e.toString())
+        return msg.errorMsg(e, 'login internal error')
     }
     if (user === null) {
-        return msg.failMsg('login failed: email not exist')
+        return msg.failedMsg('login failed: email not exist')
     }
 
     try {
@@ -69,10 +69,10 @@ const login = async (email, pwd) => {
             }
             return msg.successMsg(data, 'Login Success')
         } else {
-            return msg.failMsg('login failed: password does not match record')
+            return msg.failedMsg('login failed: password does not match record')
         }
     } catch (e) {
-        return msg.failMsg('login internal error', 'bcrypt: '+e.toString())
+        return msg.errorMsg(e, 'login internal error')
     }
 }
 

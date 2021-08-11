@@ -15,7 +15,7 @@ const getCityInfo = async (cityId) => {
             }
         })
         if (typeof city === 'undefined') {
-            return msg.failMsg('get city error: city not exist')
+            return msg.failedMsg('get city info failed: city not exist')
         }
 
         const recentTickets = await Db.Ticket.findAll({
@@ -33,7 +33,7 @@ const getCityInfo = async (cityId) => {
 
         //recent posts
     } catch (e) {
-        return msg.failMsg('get city info failed: internal error', e.toString())
+        return msg.errorMsg(e,'get city info failed: internal error')
     }
 }
 
@@ -83,7 +83,7 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
         return msg.successMsg(data, 'get city tickets success')
 
     } catch (e) {
-        return msg.failMsg('get city detail failed: internal error', e.toString())
+        return msg.errorMsg(e,'get city detail failed: internal error')
     }
 
 }
@@ -103,7 +103,7 @@ const getLandingInfo = async () => {
         const data = {newTickets, highestRateTickets}
         return msg.successMsg(data, 'get landing page info success')
     } catch (e) {
-        return msg.failMsg('get landing page data failed: internal error', e.toString())
+        msg.errorMsg(e,'get landing page data failed: internal error')
     }
 }
 

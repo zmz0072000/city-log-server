@@ -14,7 +14,7 @@ exports.createReply = async (req, res) => {
     ReplyService.createReply(token, ticketId, content).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('CREATE REPLY SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'CREATE REPLY SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -25,7 +25,7 @@ exports.modifyReply = async (req, res) => {
     ReplyService.modifyReply(token, replyId, content).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('MODIFY REPLY SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'MODIFY REPLY SERVICE UNKNOWN ERROR'))
     })
 }
 
@@ -35,6 +35,6 @@ exports.deleteReply = async (req, res) => {
     ReplyService.deleteReply(token, replyId).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('DELETE REPLY SERVICE UNKNOWN ERROR'), e)
+        msg.sendMsg(res, msg.errorMsg(e,'DELETE REPLY SERVICE UNKNOWN ERROR'))
     })
 }
