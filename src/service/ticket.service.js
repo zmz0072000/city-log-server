@@ -51,10 +51,10 @@ const getTicket = async (id) => {
             },
             attributes: ['title', 'content', 'lat', 'long', 'rateSum', 'type', 'priority', 'status', 'createdAt', 'updatedAt'],
             include: [
+                {model: Db.City, attributes: ['id', 'name']},
                 {model: Db.User, as: 'ticketAuthor', attributes: ['id', 'name']},
                 {model: Db.Reply,  attributes: ['id', 'content', 'createdAt', 'updatedAt'], include: [
-                        {model: Db.User, as: 'replyAuthor', attributes: ['id', 'name']}
-                    ]}
+                        {model: Db.User, as: 'replyAuthor', attributes: ['id', 'name']}]}
             ], order: [
                 [Db.Reply, 'id']
             ]
