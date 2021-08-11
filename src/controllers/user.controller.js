@@ -44,7 +44,7 @@ exports.getUserTickets = async (req, res) => {
     SettingService.getUserTickets(token, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET USER TICKETS SERVICE UNKNOWN ERROR'))
+        msg.sendMsg(res, msg.failMsg('GET USER TICKETS SERVICE UNKNOWN ERROR'), e)
     })
 }
 
@@ -55,7 +55,26 @@ exports.getUserReplies = async (req, res) => {
     SettingService.getUserReplies(token, pageNum).then(result => {
         msg.sendMsg(res, result)
     }).catch((e) => {
-        msg.sendMsg(res, msg.failMsg('GET USER REPLIES SERVICE UNKNOWN ERROR'))
+        msg.sendMsg(res, msg.failMsg('GET USER REPLIES SERVICE UNKNOWN ERROR'), e)
+    })
+}
+
+exports.sendRecoverEmail = async (req, res) => {
+    const {email} = req.body;
+
+    SettingService.sendRecoverEmail(email).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('SEND RECOVER EMAIL SERVICE UNKNOWN ERROR'), e)
+    })
+}
+
+exports.recoverPwd = async (req, res) => {
+    const {token, pwd} = req.body;
+    SettingService.recoverPwd(token, pwd).then(result => {
+        msg.sendMsg(res, result)
+    }).catch((e) => {
+        msg.sendMsg(res, msg.failMsg('RECOVER PASSWORD SERVICE UNKNOWN ERROR'), e)
     })
 }
 

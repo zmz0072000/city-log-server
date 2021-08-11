@@ -30,7 +30,7 @@ const getPermission = async (token) => {
             Group,
             City
         ]
-    }).catch((e) => {
+    }).catch(() => {
         throw 'internal error: database access failed'
     })
 
@@ -41,8 +41,43 @@ const getPermission = async (token) => {
     }
 }
 
+const createResetToken = (email) => {
+    return jsonwebtoken.sign({
+        email
+    }, secret+'reset', {
+        expiresIn: "30m"
+    })
+}
+
+const getResetPermission = async (token) => {
+    if (typeof token === 'undefined') throw 'empty token, require reset email again'
+    let decoded = ''
+    try {
+        decoded = jsonwebtoken.verify(token, secret+'reset');
+    } catch (e) {
+        throw 'invalid token, please require reset email again'
+    }
+    const {email} = decoded
+    const user = await User.findOne({
+        where: {
+            email: email
+        },
+        include: [
+            Group,
+            City
+        ]
+    }).catch(() => {
+        throw 'internal error: database access failed'
+    })
+    if (user) {
+        return user
+    } else {
+        throw 'user with email not exist'
+    }
+}
+
 module.exports = {
-    createToken, getPermission
+    createToken, getPermission, createResetToken, getResetPermission
 }
 
 

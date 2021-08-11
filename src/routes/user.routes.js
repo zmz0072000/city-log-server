@@ -18,4 +18,8 @@ router.put("/pwd/", userController.updateUserPwd)
 
 router.post('/logout/', userController.logout)
 
+router.post('/sendRecover/', userController.sendRecoverEmail)
+
+router.put('/recoverPwd/', userController.recoverPwd)
+
 module.exports = router

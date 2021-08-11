@@ -157,7 +157,6 @@ const voteTicket = async (token, ticketId, score) => {
         await authResult.ticket.update({
             rateSum: rateSum
         })
-        console.log('SCORE IS: '.red+score)
 
         return msg.successMsg({newRateSum: rateSum},'rate ticket success')
     } catch (e) {
