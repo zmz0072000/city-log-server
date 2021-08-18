@@ -12,6 +12,10 @@ This program requires NodeJs running environment. Required packages are
 in the ```package.json``` file.
 
 ### Program options
+To get the API documentation and usage, visit this public postman workspace:  
+
+https://www.postman.com/zmz0072000/workspace/citylog
+
 To adjust options, change the variables in the ```.env``` file  
 
 |Variable | Meaning|
