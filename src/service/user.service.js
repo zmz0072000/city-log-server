@@ -41,7 +41,7 @@ const register = async (email, pwd, name, city) => {
             return msg.failedMsg('Register error: city not exist')
         }
 
-        console.log("REGISTER STARTED")
+        //Db access and create new user
         const newUser = await User.create({
             email: email,
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync()),
@@ -53,7 +53,6 @@ const register = async (email, pwd, name, city) => {
         if (typeof newUser !== 'undefined'){
             return msg.successMsg(null, 'Register success!')
         } else {
-            console.log("register: failed due to unknown reason")
             return msg.errorMsg('unknown reason (create returned empty result)', 'Register error: unknown reason')
         }
     } catch (e) {
@@ -78,6 +77,7 @@ const login = async (email, pwd) => {
             }
         }
 
+        //Get user info
          user = await User.findOne({
             where: {
                 email: email
@@ -90,6 +90,7 @@ const login = async (email, pwd) => {
         return msg.failedMsg('login failed: email not exist')
     }
 
+    //Check password
     try {
         const hashedPwd = user.get('pwd')
         if (bcrypt.compareSync(pwd, hashedPwd)) {

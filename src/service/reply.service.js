@@ -43,13 +43,11 @@ const createReply = async (token, ticketId, content) => {
             return msg.failedMsg('create reply failed: ticket not exist')
         }
 
-        //DB access
+        //Create reply
         const newReply = await Db.Reply.create({
             content: content,
             replyAuthorId: userId,
             TicketId: ticketId
-        }).then(reply => {
-            return reply
         })
         if (typeof newReply !== 'undefined') {
             return msg.successMsg(null, 'create reply success')
@@ -69,7 +67,7 @@ const createReply = async (token, ticketId, content) => {
  */
 const modifyAuth = async (token, replyId) => {
     try {
-        //Call Permission class
+        //Call Permission class to decrypt token
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user}
         }).catch((e) => {
@@ -81,7 +79,7 @@ const modifyAuth = async (token, replyId) => {
             }
         }
 
-        //Access DB
+        //Get reply from database
         const reply = await Db.Reply.findOne({
             where: {
                 id: replyId
@@ -96,7 +94,7 @@ const modifyAuth = async (token, replyId) => {
             }
         }
 
-        //logic
+        //auth logic
         const replyAuthor = reply.get('replyAuthor').get('email')
         const tokenUserGroup = user.get('Group').get('name')
         const tokenUserName = user.get('email')

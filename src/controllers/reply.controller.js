@@ -2,10 +2,6 @@ const ReplyService = require('../service/reply.service')
 const msg = require('../utils/Message')
 require('colors')
 
-/*router.post('/', replyController.createReply)
-router.put('/', replyController.modifyReply)
-router.delete('/', replyController.deleteReply)*/
-
 exports.createReply = async (req, res) => {
     const token = req.cookies.token
     const ticketId = req.query.ticket

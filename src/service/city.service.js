@@ -19,7 +19,7 @@ const getCityInfo = async (cityId) => {
     }
 
     try {
-        // city exist check
+        //city exist check
         const city = await Db.City.findOne({
             attributes: ['name', 'detail'],
             where: {
@@ -29,7 +29,7 @@ const getCityInfo = async (cityId) => {
         if (typeof city === 'undefined') {
             return msg.failedMsg('get city info failed: city not exist')
         }
-        //recent posts
+        //fetch recent posts
         const recentTickets = await Db.Ticket.findAll({
             attributes: ['id', 'title', 'createdAt'],
             include: [
@@ -57,6 +57,7 @@ const getCityInfo = async (cityId) => {
  * @returns {Promise<Message>} - Message class to send, code in message shows running result
  */
 const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum = 1) => {
+
     //undefined check for all objects
     const nonNullObjects = {cityId}
     for (const object in nonNullObjects) {
@@ -66,6 +67,8 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
     }
 
     try {
+
+        //Define database search options
         let where = {
             CityId: cityId
         }
@@ -77,16 +80,19 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
         }
 
         let order
+        //Define order option according to isDesc
         if (isDesc === true) {
             order = [['createdAt', 'DESC']]
         } else {
             order = [['createdAt']]
         }
-        console.log('order: '.red+order)
+        //Calculate offset
         let offset = (pageNum - 1) * 10
         if (offset < 0) {
             offset = 0
         }
+
+        //Fetch tickets in the city using previous options
         const cityTickets = await Db.Ticket.findAll({
             where: where,
             attributes: ['id', 'title', 'type', 'priority', 'status', 'rateSum', 'createdAt'],
@@ -99,6 +105,7 @@ const getCityTickets = async (cityId, status, priority, isDesc = true, pageNum =
 
         })
 
+        //Count number of tickets to show page number
         const cityTicketCount = await Db.Ticket.count({
             where: where
         })

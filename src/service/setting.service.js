@@ -70,8 +70,7 @@ const updateUserInfo = async (token, email, name, CityId) => {
             where: {
                 email: user.get('email')
             }
-        }).catch((e) => {
-            console.log('database access error: '+e)
+        }).catch(() => {
             throw 'database access error'
         })
         //Give new token if necessary
@@ -103,6 +102,7 @@ const updateUserPwd = async (token, pwd) => {
             }
         }
 
+        //Call helper method
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
@@ -111,6 +111,8 @@ const updateUserPwd = async (token, pwd) => {
         if (user === null) {
             return msg.failedMsg('update pwd authorization failed: '+error)
         }
+
+        //Access db and update user info
         const newUserInfo = {
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync())
         }
@@ -126,9 +128,9 @@ const updateUserPwd = async (token, pwd) => {
 }
 
 /**
- * Helper method to get user's ticket/reply history
+ * Helper method to access getPermission method, modify the returned value to object
  * @param {?string} token - token from cookie
- * @returns {Promise<{error: *, user: User}>} - error if failed, User if found
+ * @returns {Promise<{error: *, user: User}>} - error will be un-null if failed, User will be un-null if found
  */
 const getUserHistoryAuth = async (token) => {
     const {user, error} = await Permission.getPermission(token).then(user => {
@@ -209,6 +211,7 @@ const getUserReplies = async (token, pageNum = 1) => {
             offset = 0
         }
 
+        //Access database to get all replies
         const userReplies = await Db.Reply.findAll({
             where: {
                 replyAuthorId: user.get('id')
@@ -222,7 +225,7 @@ const getUserReplies = async (token, pageNum = 1) => {
             offset: offset
         })
 
-        //access db
+        //count from db to get page number
         const userRepliesCount = await Db.Reply.count({
             where: {
                 replyAuthorId: user.get('id')
@@ -234,7 +237,6 @@ const getUserReplies = async (token, pageNum = 1) => {
             totalPage, userReplies
         }
 
-        //count from db to get page number
         return msg.successMsg(data, 'get user replies success')
 
 
@@ -250,6 +252,7 @@ const getUserReplies = async (token, pageNum = 1) => {
  */
 const sendRecoverEmail = async (email) => {
     try {
+        // User exist check
         const userCount = await Db.User.count({
             where: {
                 email: email
@@ -259,6 +262,7 @@ const sendRecoverEmail = async (email) => {
             return msg.failedMsg('Send recover email failed: no such email registered')
         }
 
+        // Generate token and send email using Email module
         const token = Permission.createResetToken(email)
         const data = await Email.sendEmail(email, token)
         return msg.successMsg(data, 'send recover email success')
@@ -283,6 +287,7 @@ const recoverPwd = async (token, pwd) => {
             }
         }
 
+        //Call getResetPermission method to see if token is valid
         const {user, error} = await Permission.getResetPermission(token).then(user => {
             return {user, error: null}
         }).catch((e) => {
@@ -291,6 +296,8 @@ const recoverPwd = async (token, pwd) => {
         if (user === null) {
             return msg.failedMsg('reset pwd authorization failed: '+error)
         }
+
+        //Use the pwd to update user info in database
         const newUserInfo = {
             pwd: bcrypt.hashSync(pwd, bcrypt.genSaltSync())
         }

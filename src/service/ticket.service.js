@@ -42,19 +42,19 @@ const createTicket = async (token, title, city, lat, long, content, type, priori
         }).then(city => {
             return city
         })
-        const authorId = user.get('id')
         if (!userCity) {
             return msg.failedMsg('create ticket error: city not exist')
         }
+
+        // Create new ticket
         const newTicket = await Db.Ticket.create({
             title, lat, long, content, type, priority, status,
-            ticketAuthorId: authorId,
+            ticketAuthorId: user.get('id'),
             CityId: city,
         }).then(ticket => {
             return ticket
         })
         if (typeof newTicket != 'undefined') {
-            console.log("create ticket: success")
             return msg.successMsg(null, 'create ticket success')
         } else {
             return msg.errorMsg('db create empty return value', 'create ticket error: unknown reason')
@@ -79,6 +79,7 @@ const getTicket = async (id) => {
             }
         }
 
+        //Db access to find ticket info
         const ticket = await Db.Ticket.findOne({
             where: {
                 id: id
@@ -113,6 +114,7 @@ const getTicket = async (id) => {
  */
 const modifyAuth = async (token, ticketId, isRating = false) => {
     try {
+        //Call getPermission method to verify token
         const {user, error} = await Permission.getPermission(token).then(user => {
             return {user}
         }).catch((e) => {
@@ -123,6 +125,7 @@ const modifyAuth = async (token, ticketId, isRating = false) => {
                 error: 'authorization failed: '+error
             }
         }
+        //Get ticket info from ticketId
         const ticket = await Db.Ticket.findOne({
             where: {
                 id: ticketId
@@ -130,13 +133,13 @@ const modifyAuth = async (token, ticketId, isRating = false) => {
         }).then(ticket => {
             return ticket
         })
-
         if (!ticket) {
             return {
                 error: 'ticket not found'
             }
         }
 
+        //Auth logic
         const tokenUserGroup = user.get('Group').get('name')
         const ticketAuthor = ticket.get('ticketAuthor').get('email')
         const tokenUserName = user.get('email')
@@ -172,14 +175,18 @@ const modifyAuth = async (token, ticketId, isRating = false) => {
  */
 const voteTicket = async (token, ticketId, score) => {
     try {
+        //Score can only be 1 or -1 or 0
         if (score > 1 || score < -1) {
             return msg.failedMsg('rate ticket failed: invalid score')
         }
 
+        //Auth helper method
         const authResult = await modifyAuth(token, ticketId, true)
         if (!authResult.ticket) {
             return msg.failedMsg('rate ticket failed: '+authResult.error)
         }
+
+        //Get current rate in Rate join table. If exist modify it, if not create new rate
         const currentRate = await Db.Rate.findOne ({
             where: {
                 TicketId: ticketId,
@@ -197,6 +204,8 @@ const voteTicket = async (token, ticketId, score) => {
                 UserId: authResult.user.get('id')
             })
         }
+
+        //Update rateSum of ticket
         const rateSum = await Db.Rate.sum('score', {
             where: {
                 TicketId: ticketId
@@ -224,7 +233,7 @@ const getMyVote = async (token, ticketId) => {
         const user = await Permission.getPermission(token).then(user => {
             return user
         }).catch(() => {
-            // if error occurs, user will be null and currentRate stays zero
+            // if error occurs, user will be null and method will still return success message with zero vote
             return null
         })
 
@@ -269,12 +278,14 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content, ty
             }
         }
 
+        //Call auth help method
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
             return msg.failedMsg('modify ticket failed: '+authResult.error)
         }
         const ticket = authResult.ticket
 
+        //Update ticket with new information
         const newTicketInfo = {
             title, lat, long, content, type, priority, status,
             CityId: city,
@@ -295,11 +306,21 @@ const modifyTicket = async (token, ticketId, title, city, lat, long, content, ty
  */
 const deleteTicket = async (token, ticketId) => {
     try {
+        //undefined check for all objects
+        const nonNullObjects = {ticketId}
+        for (const object in nonNullObjects) {
+            if (!nonNullObjects[object]) {
+                return msg.failedMsg('Invalid input format, missing '+object)
+            }
+        }
+
+        //Auth helper method
         const authResult = await modifyAuth(token, ticketId)
         if (!authResult.ticket) {
             return msg.failedMsg('delete ticket failed: '+authResult.error)
         }
         const ticket = authResult.ticket
+        //Delete ticket
         await ticket.destroy()
         return msg.successMsg('delete ticket success')
     } catch (e) {

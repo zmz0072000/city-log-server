@@ -9,7 +9,7 @@ can be made in their city and vote on the best suggestions.
 
 ### Program Installation
 This program requires NodeJs running environment. Required packages are 
-listed in the ```package.json``` file
+in the ```package.json``` file.
 
 ### Program options
 To adjust options, change the variables in the ```.env``` file  
@@ -27,6 +27,18 @@ EMAIL_LINK|First part of password reset link (decided by frontend member)
 
 
 ### Program running instruction and outputs
+- Before starting the server, initialize the database using ```npm run forceSync```  
+  **WARNING**: doing this will wipe out all data in existing database!
+```bash
+(base) Muzhi-Macbook:city-log-server muzhizhang$ npm run forceSync
+
+> city-log-server@1.0.0 forceSync
+> node ForceSync.js
+
+Force sync finished.
+Force Sync Script finished successfully.
+```
+
 - To start the server, use ```npm run start```
 ```bash
 (base) Muzhi-Macbook:city-log-server muzhizhang$ npm run start

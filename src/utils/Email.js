@@ -44,6 +44,7 @@ const transporter = nodemailer.createTransport(config)
 exports.sendEmail = async (userEmail, token) => {
     const link = process.env.EMAIL_LINK+token
 
+    //Send email using defined transporter
     const info = await transporter.sendMail({
         from: `"CITY LOG ACCOUNT SECURITY" <${process.env.EMAIL_USER}>`,
         to: userEmail,
